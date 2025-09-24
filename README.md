@@ -12,19 +12,19 @@
 
 ## 🔑 Key Features
 
-- **🔬 Core ML Pipeline**
+### - **🔬 Core ML Pipeline**
 
-- **Free-text → Structured data:** Maps user inputs to 54 canonical relationship questions.
-- **Polarity adjustment:** Detects contradictions (opposite meanings) and flips values.
-- **Prediction:** Uses XGBoost to calculate divorce likelihood.
-- **Auditability:** Logs show which canonical item was matched, stance, confidence, and adjusted values.
+  - **Free-text → Structured data:** Maps user inputs to 54 canonical relationship questions.
+  - **Polarity adjustment:** Detects contradictions (opposite meanings) and flips values.
+  - **Prediction:** Uses XGBoost to calculate divorce likelihood.
+  - **Auditability:** Logs show which canonical item was matched, stance, confidence, and adjusted values.
 
-- **🖥️ Web Application**
+### - **🖥️ Web Application**
 
-- **Doctor Login/Register**
-- **Dashboard:** Manage couples and start new assessments.
-- **Assessment Page:** Add structured answers for each partner.
-- **Prediction:** Run ML prediction and display results in the UI.
+  - **Doctor Login/Register**
+  - **Dashboard:** Manage couples and start new assessments.
+  - **Assessment Page:** Add structured answers for each partner.
+  - **Prediction:** Run ML prediction and display results in the UI.
 
 --------
 
@@ -67,7 +67,7 @@ pip install -r requirements.txt
 
 --------
 
-▶️ Run Backend (FastAPI)
+## ▶️ Run Backend (FastAPI)
 
 ```bash
 uvicorn backend.main:app --reload
@@ -79,7 +79,7 @@ Just open frontend/index.html in your browser.
 
 --------
 
-▶️ Run CLI Demo
+## ▶️ Run CLI Demo
 
 If you want to test the pipeline without UI:
 
@@ -93,7 +93,7 @@ And an audit log showing mappings and results for each input.
 
 --------
 
-🧠 How It Works
+## 🧠 How It Works
 - LLM Routing: Routes the free-text input to the most relevant canonical question using Gemini API.
 - Polarity Fixing: Checks if the user input contradicts the canonical question (using NLI). If the contradiction is detected, the answer scale (0–4) is flipped.
 - Deduplication: Handles cases where multiple inputs map to the same canonical item.

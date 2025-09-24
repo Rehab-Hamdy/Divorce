@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome - Divorce Prediction System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="welcome-page">
+  <!-- Header -->
+  <header class="welcome-header">
+    <h1>Divorce Prediction System</h1>
+  </header>
+
+  <!-- Hero Section -->
+  <div class="welcome-hero">
+    <div class="welcome-hero-text">
+      <h2>Welcome to the Future of Relationship Assessment</h2>
+      <p>AI-powered insights to help couples and doctors evaluate relationship health in a meaningful and supportive way.</p>
+      <button class="welcome-btn" id="openRegister">Register</button>
+      <button class="welcome-btn" id="openLogin">Login</button>
+    </div>
+
+    <!-- Slider -->
+    <div class="welcome-slider">
+      <div class="slides">
+        <img src="imgs/Divorce.png" alt="Couple illustration 1" class="welcome-img">
+      </div>
+    </div>
+  </div>
+
+  <!-- Sections as Cards -->
+  <div class="welcome-sections">
+    <div class="welcome-card">
+      <h2>🔍 About the Project</h2>
+      <p>Our system combines psychology and AI to identify relationship strengths and risks. By analyzing questionnaire responses, we provide clear insights into the dynamics of a couple’s relationship.</p>
+    </div>
+
+    <div class="welcome-card">
+      <h2>📊 How It Works</h2>
+      <p>Doctors create personalized assessments. Couples then respond to scientifically validated questions. The AI model processes these responses, generating predictions and easy-to-read reports.</p>
+    </div>
+
+    <div class="welcome-card">
+      <h2>🌟 Why It Matters</h2>
+      <p>Early awareness of relationship challenges can guide couples toward meaningful conversations and solutions. Our system supports healthier connections and more informed decision-making.</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="welcome-footer">
+    <p>&copy; 2025 Divorce Prediction System | Built with ❤️ for better understanding</p>
+  </footer>
+
+  <!-- Register Modal -->
+  <div id="registerModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn">&times;</span>
+      <h2>Register</h2>
+      <form id="registerForm">
+        <label for="regName">Doctor Name:</label>
+        <input type="text" id="regName" required>
+        
+        <label for="regEmail">Doctor Email:</label>
+        <input type="email" id="regEmail" required>
+        
+        <button type="submit">Register</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn">&times;</span>
+      <h2>Login</h2>
+      <form id="loginForm">
+        <label for="loginEmail">Doctor Email:</label>
+        <input type="email" id="loginEmail" required>
+        
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const registerModal = document.getElementById("registerModal");
+    const loginModal = document.getElementById("loginModal");
+    const openRegisterBtn = document.getElementById("openRegister");
+    const openLoginBtn = document.getElementById("openLogin");
+    const closeBtns = document.querySelectorAll(".close-btn");
+
+    openRegisterBtn.onclick = () => {
+      registerModal.style.display = "flex";
+      document.body.classList.add("blur-bg");
+    }
+
+    openLoginBtn.onclick = () => {
+      loginModal.style.display = "flex";
+      document.body.classList.add("blur-bg");
+    }
+
+    closeBtns.forEach(btn => {
+      btn.onclick = () => {
+        registerModal.style.display = "none";
+        loginModal.style.display = "none";
+        document.body.classList.remove("blur-bg");
+      }
+    });
+
+    window.onclick = (event) => {
+      if (event.target === registerModal || event.target === loginModal) {
+        registerModal.style.display = "none";
+        loginModal.style.display = "none";
+        document.body.classList.remove("blur-bg");
+      }
+    }
+  </script>
+
+  <!-- JS logic -->
+  <script src="app.js"></script>
+</body>
+</html>

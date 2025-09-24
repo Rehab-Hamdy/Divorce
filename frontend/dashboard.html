@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="welcome-page">
+  <header class="welcome-header">
+    <h1>Admin Dashboard</h1>
+  </header>
+<main class="dashboard-sections">
+  <!-- Couples List Card -->
+  <div class="dashboard-card">
+    <h2>Couples List</h2>
+    <table id="couplesTable">
+      <thead>
+        <tr>
+          <th>Couple</th>
+          <th>Last Probability</th>
+          <th>Last Prediction</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- Add Couple Card -->
+  <div class="dashboard-card">
+    <h2>Add Couple</h2>
+    <form id="coupleForm">
+      <label>Partner A: <input type="text" id="partnerA" required></label>
+      <label>Partner B: <input type="text" id="partnerB" required></label>
+      <button type="submit">Add Couple</button>
+    </form>
+  </div>
+</main>
+
+
+  <script src="app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", loadDashboard);
+  </script>
+</body>
+</html>

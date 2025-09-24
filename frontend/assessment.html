@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Assessment</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="welcome-page">
+
+  <!-- Header -->
+  <header class="welcome-header">
+    <h1>Create Assessment</h1>
+  </header>
+
+  <!-- Main Sections -->
+  <div class="dashboard-sections">
+
+    <!-- Assessment Card -->
+    <div class="dashboard-card">
+      <h2>New Assessment</h2>
+      <form id="assessmentForm">
+        <label for="title">Assessment Title:</label>
+        <input type="text" id="title" required>
+        <button type="submit">Create Assessment</button>
+      </form>
+    </div>
+
+    <!-- Add Answers Card -->
+    <div class="dashboard-card">
+      <h2>Add Answers</h2>
+      <form id="answerForm">
+        <label for="assessmentId">Assessment ID:</label>
+        <input type="number" id="assessmentId" required>
+
+        <label for="featureName">Feature Name:</label>
+        <input type="text" id="featureName" required>
+
+        <label for="featureValue">Feature Value (0–4):</label>
+        <input type="number" id="featureValue" min="0" max="4" required>
+
+        <label for="partner">Partner:</label>
+        <select id="partner" required>
+          <option value="A">Partner A</option>
+          <option value="B">Partner B</option>
+        </select>
+
+        <button type="submit">Add Answer</button>
+      </form>
+    </div>
+
+    <!-- Prediction Card -->
+    <div class="dashboard-card">
+      <h2>Run Prediction</h2>
+      <form id="predictForm">
+        <label for="predictId">Assessment ID:</label>
+        <input type="number" id="predictId" required>
+        <button type="submit">Predict</button>
+      </form>
+      <pre id="predictResult"></pre>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    const coupleId = Number(localStorage.getItem("currentCoupleId"));
+    if (!coupleId) {
+      alert("Couple not selected");
+      window.location.href = "dashboard.html";
+    }
+
+    document.getElementById("assessmentForm")?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const doctorId = localStorage.getItem("doctorId");
+      if (!doctorId) {
+        alert("Please login first");
+        window.location.href = "index.html";
+        return;
+      }
+
+      const data = {
+        doctor_id: Number(doctorId),
+        couple_id: coupleId,
+        title: document.getElementById("title").value,
+      };
+
+      const res = await fetch(`${API_BASE}/assessments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) {
+        alert("Error creating assessment: " + await res.text());
+        return;
+      }
+
+      const assessment = await res.json();
+      alert("Assessment created with ID " + assessment.id);
+      document.getElementById("assessmentId").value = assessment.id;
+      document.getElementById("predictId").value = assessment.id;
+    });
+  </script>
+</body>
+</html>

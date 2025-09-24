@@ -77,24 +77,51 @@ async function loadDashboard() {
   const tbody = document.querySelector("#couplesTable tbody");
   tbody.innerHTML = ""; // clear old rows
 
-  data.couples.forEach((c) => {
-  const row = document.createElement("tr");
-  row.innerHTML = `
-    <td>${c.partner_a_name} & ${c.partner_b_name}</td>
-    <td>${c.last_proba ? (c.last_proba * 100).toFixed(1) + "%" : "-"}</td>
-    <td>${c.last_class === null ? "-" : c.last_class === 1 ? "Divorced" : "Married"}</td>
-    <td>
-      <button onclick="goToAssessment(${c.couple_id})">Create Assessment</button>
-    </td>
-  `;
-  tbody.appendChild(row);
-});
+  // Calculate statistics
+  let total = data.couples.length;
+  let divorced = 0;
+  let married = 0;
+  let noPrediction = 0;
 
+  data.couples.forEach(couple => {
+    if (couple.last_class === 1) {
+      divorced++;
+    } else if (couple.last_class === 0) {
+      married++;
+    } else {
+      noPrediction++;
+    }
+  });
+
+  // Update statistics in the UI
+  document.getElementById('totalCouples').textContent = total;
+  document.getElementById('divorcedCouples').textContent = divorced;
+  document.getElementById('marriedCouples').textContent = married;
+  document.getElementById('noPrediction').textContent = noPrediction;
+
+  data.couples.forEach((c) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${c.partner_a_name} & ${c.partner_b_name}</td>
+      <td>${c.last_proba ? (c.last_proba * 100).toFixed(1) + "%" : "-"}</td>
+      <td>${c.last_class === null ? "-" : c.last_class === 1 ? "Divorced" : "Married"}</td>
+      <td>
+        <a href="timeline.html?couple_id=${c.couple_id}" class="history-btn">View History</a>
+      </td>
+      <td>
+        <button onclick="goToAssessment(${c.couple_id})">Create Assessment</button>
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
 }
 
-function startAssessment(coupleId) {
-  document.getElementById("coupleId").value = coupleId;
-  window.scrollTo(0, document.getElementById("assessmentForm").offsetTop);
+// ==========================
+// Go to assessment page
+// ==========================
+function goToAssessment(coupleId) {
+  localStorage.setItem("currentCoupleId", coupleId);
+  window.location.href = "assessment.html";
 }
 
 // ==========================

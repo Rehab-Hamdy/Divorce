@@ -24,6 +24,22 @@ class CoupleOut(BaseModel):
     partner_b_name: str
     class Config: from_attributes = True
 
+
+class PredictionHistoryItem(BaseModel):
+    id: int
+    assessment_id: int
+    proba: float
+    pred_class: int
+    created_at: str   # ISO timestamp
+    title: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+class PredictionHistoryOut(BaseModel):
+    couple_id: int
+    items: List[PredictionHistoryItem]
+
 class QuestionCreate(BaseModel):
     doctor_id: int
     text: str

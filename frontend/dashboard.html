@@ -9,38 +9,81 @@
   <header class="welcome-header">
     <h1>Admin Dashboard</h1>
   </header>
-<main class="dashboard-sections">
-  <!-- Couples List Card -->
-  <div class="dashboard-card">
-    <h2>Couples List</h2>
-    <table id="couplesTable">
-      <thead>
-        <tr>
-          <th>Couple</th>
-          <th>Last Probability</th>
-          <th>Last Prediction</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
 
-  <!-- Add Couple Card -->
-  <div class="dashboard-card">
-    <h2>Add Couple</h2>
-    <form id="coupleForm">
-      <label>Partner A: <input type="text" id="partnerA" required></label>
-      <label>Partner B: <input type="text" id="partnerB" required></label>
-      <button type="submit">Add Couple</button>
-    </form>
-  </div>
-</main>
+  <main class="dashboard-sections">
+    <!-- Statistics Card -->
+    <div class="dashboard-card stats-card">
+      <h2>Couples Analysis</h2>
+      <div class="stats-container">
+        <div class="stat-item">
+          <div class="stat-value" id="totalCouples">0</div>
+          <div class="stat-label">Total Couples</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="divorcedCouples">0</div>
+          <div class="stat-label">High Risk</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="marriedCouples">0</div>
+          <div class="stat-label">Low Risk</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="noPrediction">0</div>
+          <div class="stat-label">No Prediction</div>
+        </div>
+      </div>
+    </div>
 
+    <!-- Couples List Card -->
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h2>Couples List</h2>
+        <button id="openModalBtn">+ Add Couple</button>
+      </div>
+      <table id="couplesTable">
+        <thead>
+          <tr>
+            <th>Couple</th>
+            <th>Last Probability</th>
+            <th>Last Prediction</th>
+            <th>History</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Add Couple Modal -->
+  <div id="coupleModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" id="closeModalBtn">&times;</span>
+      <h2>Add Couple</h2>
+      <form id="coupleForm">
+        <label>Partner A</label>
+        <input type="text" id="partnerA" required>
+        <label>Partner B</label>
+        <input type="text" id="partnerB" required>
+        <button type="submit">Add Couple</button>
+      </form>
+    </div>
+  </div>
 
   <script src="app.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", loadDashboard);
+
+    // Modal logic
+    const modal = document.getElementById("coupleModal");
+    const openBtn = document.getElementById("openModalBtn");
+    const closeBtn = document.getElementById("closeModalBtn");
+
+    openBtn.onclick = () => modal.style.display = "flex";
+    closeBtn.onclick = () => modal.style.display = "none";
+    window.onclick = (e) => {
+      if (e.target === modal) modal.style.display = "none";
+    };
   </script>
 </body>
 </html>

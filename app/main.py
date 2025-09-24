@@ -11,7 +11,8 @@ from app.schemas import (
     QuestionCreate, QuestionOut,
     AssessmentCreate, AssessmentOut,
     AnswersBulkIn, PredictionOut,
-    DashboardOut, DashboardCoupleRow
+    DashboardOut, DashboardCoupleRow,
+    PredictionHistoryOut
 )
 from app.services.predictor import predict_for_assessment
 
@@ -137,3 +138,32 @@ def get_doctor_by_email(email: str, db: Session = Depends(get_db)):
     if not doctor:
         raise HTTPException(status_code=404, detail="Doctor not found")
     return doctor
+
+
+@app.get("/couples/{couple_id}/history", response_model=PredictionHistoryOut)
+def couple_history(couple_id: int, db: Session = Depends(get_db)):
+    couple = db.query(Couple).get(couple_id)
+    if not couple:
+        raise HTTPException(404, "Couple not found")
+
+    preds = (
+        db.query(Prediction, Assessment.title)
+        .join(Assessment, Prediction.assessment_id == Assessment.id)
+        .filter(Assessment.couple_id == couple_id)
+        .order_by(Prediction.created_at.desc())
+        .all()
+    )
+
+    items = [
+        {
+            "id": p.Prediction.id,
+            "assessment_id": p.Prediction.assessment_id,
+            "proba": p.Prediction.proba,
+            "pred_class": p.Prediction.pred_class,
+            "created_at": p.Prediction.created_at.isoformat(),
+            "title": p.title,
+        }
+        for p in preds
+    ]
+
+    return PredictionHistoryOut(couple_id=couple_id, items=items)

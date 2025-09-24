@@ -1,0 +1,444 @@
+/* Modern Assessment Page Styles */
+:root {
+  --primary: #3498db;
+  --primary-hover: #2980b9;
+  --secondary: #2ecc71;
+  --danger: #e74c3c;
+  --warning: #f39c12;
+  --success: #27ae60;
+  --text: #2c3e50;
+  --text-secondary: #7f8c8d;
+  --light-bg: #f8f9fa;
+  --card-bg: #ffffff;
+  --border-color: #dfe6e9;
+  --border-radius: 6px;
+  --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+}
+
+/* Base Layout */
+.welcome-page {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+.dashboard-sections {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  padding: 1rem;
+}
+
+/* Card Styles */
+.dashboard-card {
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #eee;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 100%;
+  background: var(--primary);
+  transition: var(--transition);
+}
+
+/* Header Styles */
+.welcome-header {
+  background: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 1rem 0;
+  margin: 0;
+  position: relative;
+  z-index: 10;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.welcome-header h1 {
+  color: #2c3e50;
+  font-size: 1.5rem;
+  margin: 0;
+  font-weight: 600;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 8px 16px;
+  background: #3498db;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.back-btn i {
+  font-size: 0.9em;
+}
+
+.back-btn:hover {
+  background: #2980b9;
+  text-decoration: none;
+}
+
+/* Form Styles */
+#assessmentForm,
+#questionForm {
+  background: var(--light-bg);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  margin: 1.5rem 0;
+  position: relative;
+  border: 1px dashed rgba(108, 92, 231, 0.3);
+}
+
+#assessmentForm label,
+#questionForm label {
+  color: var(--text);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  display: block;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #636e72;
+}
+
+#assessmentForm input[type="text"],
+#questionForm input[type="text"],
+#questionForm input[type="number"] {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  border: 2px solid #dfe6e9;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: var(--transition);
+  background: #fff;
+  color: var(--text);
+}
+
+#assessmentForm input[type="text"]:focus,
+#questionForm input[type="text"]:focus,
+#questionForm input[type="number"]:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1);
+  outline: none;
+}
+
+/* Button Styles */
+button {
+  padding: 0.875rem 2rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: var(--transition);
+  z-index: -1;
+}
+
+button:hover::before {
+  width: 100%;
+}
+
+#openQuestionModal {
+  background: var(--secondary);
+  color: white;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+#openQuestionModal:hover {
+  background: #00a884;
+  transform: translateY(-2px);
+}
+
+#predictBtn {
+  background: var(--primary);
+  color: white;
+  width: 100%;
+  padding: 1rem;
+  font-size: 1rem;
+  margin-top: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+#predictBtn::after {
+  content: '→';
+  margin-left: 0.5rem;
+  transition: var(--transition);
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+#predictBtn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+#predictBtn:hover::after {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Questions List */
+.questions-list {
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0 0 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.questions-list li {
+  background: white;
+  padding: 1.25rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: var(--transition);
+  border-left: 4px solid var(--primary);
+}
+
+.questions-list li:hover {
+  transform: translateX(5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Modal Styles */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: white;
+  border-radius: var(--border-radius);
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: slideUp 0.4s ease-out;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #636e72;
+  cursor: pointer;
+  transition: var(--transition);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.close-btn:hover {
+  background: #f1f2f6;
+  color: var(--danger);
+  transform: rotate(90deg);
+}
+
+/* Prediction Result */
+#predictResult {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 1.5rem;
+  font-family: 'Fira Code', monospace, monospace;
+  white-space: pre-wrap;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px dashed #b2bec3;
+  background: #f8f9fa;
+  color: #2d3436;
+  line-height: 1.6;
+  font-size: 0.9rem;
+}
+
+/* Layout Adjustments */
+.dashboard-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+#assessmentCard {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 2rem;
+}
+
+#questionsCard {
+  width: 100%;
+  max-width: 100%;
+  grid-column: 1 / -1;
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+  .dashboard-sections {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  
+  #assessmentCard {
+    grid-column: 1 / -1;
+  }
+  
+  #questionsCard {
+    grid-column: 1 / -1;
+  }
+  
+  #predictionCard {
+    grid-column: 1 / -1;
+  }
+  
+  #openQuestionModal {
+    width: auto;
+    padding: 0.875rem 2rem;
+  }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboard-card {
+  animation: fadeInUp 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+.dashboard-card:nth-child(1) { animation-delay: 0.1s; }
+.dashboard-card:nth-child(2) { animation-delay: 0.2s; }
+.dashboard-card:nth-child(3) { animation-delay: 0.3s; }
+
+/* Loading State */
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Assessment Info */
+#assessmentInfo {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: #f1f9ff;
+  border-radius: 8px;
+  border-left: 4px solid var(--primary);
+  animation: fadeIn 0.5s ease-out;
+}
+
+#assessmentTitleDisplay {
+  margin: 0 0 0.5rem 0;
+  color: var(--text);
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+#assessmentIdDisplay {
+  font-family: 'Fira Code', monospace;
+  color: #636e72;
+  font-size: 0.9rem;
+  background: rgba(0, 0, 0, 0.03);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  display: inline-block;
+}

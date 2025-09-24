@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Couple History Timeline</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
+  <body class="welcome-page">
+    <header class="welcome-header">
+      <div class="header-content">
+        <h1>Couple History Timeline</h1>
+        <a href="dashboard.html" class="back-btn">
+          <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+      </div>
+    </header>
+
+    <main class="timeline-section">
+      <div class="timeline-card">
+        <h2><i class="fas fa-history"></i> Assessment History</h2>
+        <ul class="timeline" id="timelineList">
+          <!-- Dynamic history items will go here -->
+        </ul>
+      </div>
+    </main>
+
+    <script>
+      const API_BASE = "http://127.0.0.1:8000";
+      const urlParams = new URLSearchParams(window.location.search);
+      const coupleId = urlParams.get("couple_id");
+      let coupleNames = "";
+
+      async function loadTimeline() {
+        try {
+          // First, get the couple's names
+          const coupleRes = await fetch(`${API_BASE}/couples/${coupleId}`);
+          if (coupleRes.ok) {
+            const coupleData = await coupleRes.json();
+            coupleNames = `${coupleData.partner_a_name} & ${coupleData.partner_b_name}`;
+            document.querySelector(
+              ".header-content h1"
+            ).textContent = `${coupleNames}'s Timeline`;
+          }
+
+          // Then get the timeline data
+          const res = await fetch(`${API_BASE}/couples/${coupleId}/history`);
+          if (!res.ok) {
+            throw new Error("Failed to load history");
+          }
+
+          const data = await res.json();
+          const list = document.getElementById("timelineList");
+          list.innerHTML = "";
+
+          if (data.items.length === 0) {
+            list.innerHTML = `
+                        <li class="no-entries">
+                            <div class="timeline-content">
+                                <i class="fas fa-inbox"></i>
+                                <p>No assessment history available yet</p>
+                                <a href="assessment.html?couple_id=${coupleId}" class="primary-btn">
+                                    <i class="fas fa-plus"></i> Create First Assessment
+                                </a>
+                            </div>
+                        </li>`;
+            return;
+          }
+
+          // Sort items by date (newest first)
+          const sortedItems = [...data.items].sort(
+            (a, b) => new Date(b.created_at) - new Date(a.created_at)
+          );
+
+          sortedItems.forEach((item) => {
+            const li = document.createElement("li");
+            const date = new Date(item.created_at);
+            const formattedDate = date.toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+
+            const predictionClass =
+              item.pred_class === 1 ? "prediction-high" : "prediction-low";
+            const predictionLabel =
+              item.pred_class === 1 ? "High Risk" : "Low Risk";
+            const predictionIcon =
+              item.pred_class === 1 ? "fa-exclamation-triangle" : "fa-heart";
+
+            li.innerHTML = `
+                        <span>${formattedDate}</span>
+                        <div class="timeline-content">
+                            <h3>${item.title || "Relationship Assessment"}</h3>
+                            <div class="prediction-info">
+                                <div class="prediction-percent">
+                                    <i class="fas ${predictionIcon}"></i>
+                                    <span>${(item.proba * 100).toFixed(
+                                      1
+                                    )}% Probability</span>
+                                </div>
+                                <span class="prediction-label ${predictionClass}">
+                                    ${predictionLabel}
+                                </span>
+                            </div>
+                            <div class="timeline-actions">
+                                <a href="assessment.html?assessment_id=${
+                                  item.assessment_id
+                                }" class="secondary-btn">
+                                    <i class="fas fa-eye"></i> View Details
+                                </a>
+                            </div>
+                        </div>
+                    `;
+            list.appendChild(li);
+          });
+        } catch (error) {
+          console.error("Error loading timeline:", error);
+          const list = document.getElementById("timelineList");
+          list.innerHTML = `
+                    <li class="error-state">
+                        <div class="timeline-content">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <p>Failed to load timeline. Please try again later.</p>
+                            <button onclick="loadTimeline()" class="primary-btn">
+                                <i class="fas fa-sync-alt"></i> Retry
+                            </button>
+                        </div>
+                    </li>`;
+        }
+      }
+
+      // Load the timeline when the page loads
+      document.addEventListener("DOMContentLoaded", loadTimeline);
+    </script>
+  </body>
+</html>

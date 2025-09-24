@@ -9,13 +9,8 @@
 
 --------
 
-## 🔑 Key Features
-- **Free-text to structured data:** Maps user inputs to a fixed set of 54 canonical questions.
-- **Polarity adjustment:** Detects contradictions (opposite meanings) and flips values.
-- **Prediction:** Uses **XGBoost** to predict divorce likelihood.
-- **Auditability:** Provides logs showing which canonical item was matched, stance, confidence, and adjusted values.
 
-🔑 Key Features
+## 🔑 Key Features
 
 - **🔬 Core ML Pipeline**
 

@@ -2,29 +2,30 @@
 
 - This project predicts divorce likelihood based on relationship-related answers. It combines:
 
-- Gemini-powered LLM for free-text to structured data mapping.
-- XGBoost classifier for prediction.
-- FastAPI backend for APIs.
-- HTML/CSS/JS UI for doctors to register, add couples, create assessments, enter answers, and run predictions.
+  - Gemini-powered LLM for free-text to structured data mapping.
+  - XGBoost classifier for prediction.
+  - FastAPI backend for APIs.
+  - HTML/CSS/JS UI for doctors to register, add couples, create assessments, enter answers, run predictions, and track couple history via timeline.
 
 --------
 
 
 ## 🔑 Key Features
 
-### - **🔬 Core ML Pipeline**
+### 🔬 Core ML Pipeline
 
   - **Free-text → Structured data:** Maps user inputs to 54 canonical relationship questions.
   - **Polarity adjustment:** Detects contradictions (opposite meanings) and flips values.
   - **Prediction:** Uses XGBoost to calculate divorce likelihood.
   - **Auditability:** Logs show which canonical item was matched, stance, confidence, and adjusted values.
 
-### - **🖥️ Web Application**
+### 🖥️ Web Application
 
   - **Doctor Login/Register**
   - **Dashboard:** Manage couples and start new assessments.
   - **Assessment Page:** Add structured answers for each partner.
   - **Prediction:** Run ML prediction and display results in the UI.
+  - **Timeline View:** Each couple has a **history timeline** showing assessments, predictions, and progress over time.
 
 --------
 
@@ -94,8 +95,8 @@ And an audit log showing mappings and results for each input.
 --------
 
 ## 🧠 How It Works
-- LLM Routing: Routes the free-text input to the most relevant canonical question using Gemini API.
-- Polarity Fixing: Checks if the user input contradicts the canonical question (using NLI). If the contradiction is detected, the answer scale (0–4) is flipped.
-- Deduplication: Handles cases where multiple inputs map to the same canonical item.
-- Prediction: Uses the XGBoost classifier to predict the divorce likelihood, which outputs a probability and class.
-- UI → Doctor enters answers, runs predictions, and gets results in a web dashboard.
+- **LLM Routing:** Routes the free-text input to the most relevant canonical question using Gemini API.
+- **Polarity Fixing:** Checks if the user input contradicts the canonical question (using NLI). If the contradiction is detected, the answer scale (0–4) is flipped.
+- **Deduplication:** Handles cases where multiple inputs map to the same canonical item.
+- **Prediction:** Uses the XGBoost classifier to predict the divorce likelihood, which outputs a probability and class.
+- **UI** → Doctor enters answers, runs predictions, and gets results in a web dashboard.

@@ -73,7 +73,7 @@ def predict_for_assessment(db: Session, assessment_id: int, decision_thr: float 
         assessment_id=assessment_id,
         proba=proba,
         pred_class=pred_class,
-        vector_json={feat: (None if pd.isna(v) else float(v)) for feat, v in x_avg.items()},
+        vector_json={feat: (None if pd.isna(v) else int(round(v))) for feat, v in x_avg.items()},
         audit_json=(audit_combined.fillna("").to_dict(orient="records") if not audit_combined.empty else []),
     )
     db.add(pred_row)
@@ -81,3 +81,4 @@ def predict_for_assessment(db: Session, assessment_id: int, decision_thr: float 
     db.refresh(pred_row)
 
     return proba, pred_class, pred_row.vector_json, pred_row.audit_json
+

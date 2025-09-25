@@ -3,9 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <title>Divorce Risk Assessment</title>
-    <link rel="stylesheet" href="assessment-style.css">
+    <link rel="stylesheet" href="assessment-style.css" />
     <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
     <style>
       /* Simple modal styling */
       .modal {
@@ -97,10 +100,16 @@
         <form id="questionForm">
           <label>Question Text:</label>
           <input type="text" id="questionText" required />
-          <label>Partner A Answer (0–4):</label>
+          <!-- <label>Partner A Answer (0–4):</label>
           <input type="number" id="answerA" min="0" max="4" required />
           <label>Partner B Answer (0–4):</label>
+          <input type="number" id="answerB" min="0" max="4" required /> -->
+          <label id="labelAnswerA">Partner A Answer (0–4):</label>
+          <input type="number" id="answerA" min="0" max="4" required />
+
+          <label id="labelAnswerB">Partner B Answer (0–4):</label>
           <input type="number" id="answerB" min="0" max="4" required />
+
           <button type="submit">Add</button>
         </form>
       </div>
@@ -115,6 +124,8 @@
         alert("Couple not selected");
         window.location.href = "dashboard.html";
       }
+
+      loadCoupleNames();
 
       // Create Assessment
       document
@@ -214,9 +225,13 @@
           }
 
           // Add to UI
+          const partnerAName = localStorage.getItem("partnerAName") || "Partner A";
+          const partnerBName = localStorage.getItem("partnerBName") || "Partner B";
+
           const li = document.createElement("li");
-          li.textContent = `${questionText} → A: ${answerA}, B: ${answerB}`;
+          li.textContent = `${questionText} → ${partnerAName}: ${answerA}, ${partnerBName}: ${answerB}`;
           document.getElementById("questionsList").appendChild(li);
+
 
           // Reset & close modal
           document.getElementById("questionForm").reset();

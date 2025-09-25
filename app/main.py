@@ -16,6 +16,7 @@ from app.schemas import (
 )
 from app.services.predictor import predict_for_assessment
 
+
 # Create tables (demo; in prod use Alembic)
 Base.metadata.create_all(bind=engine)
 
@@ -167,3 +168,16 @@ def couple_history(couple_id: int, db: Session = Depends(get_db)):
     ]
 
     return PredictionHistoryOut(couple_id=couple_id, items=items)
+
+
+
+@app.get("/couples/{couple_id}")
+def get_couple(couple_id: int, db: Session = Depends(get_db)):
+    couple = db.query(Couple).filter(Couple.id == couple_id).first()
+    if not couple:
+        raise HTTPException(status_code=404, detail="Couple not found")
+    return {
+        "couple_id": couple.id,
+        "partner_a_name": couple.partner_a_name,
+        "partner_b_name": couple.partner_b_name,
+    }

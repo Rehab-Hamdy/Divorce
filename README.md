@@ -2,10 +2,10 @@
 
 - This project predicts divorce likelihood based on relationship-related answers. It combines:
 
-- Gemini-powered LLM for free-text to structured data mapping.
-- XGBoost classifier for prediction.
-- FastAPI backend for APIs.
-- HTML/CSS/JS UI for doctors to register, add couples, create assessments, enter answers, and run predictions.
+  - Gemini-powered LLM for free-text to structured data mapping.
+  - XGBoost classifier for prediction.
+  - FastAPI backend for APIs.
+  - HTML/CSS/JS UI for doctors to register, add couples, create assessments, enter answers, run predictions, and track couple history via timeline.
 
 --------
 

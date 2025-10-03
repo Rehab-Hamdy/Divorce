@@ -109,3 +109,21 @@ def gemini_route_and_relation(user_text: str, topk: int = 1, min_conf_allow: flo
         return out
     results = out.get("results", [])
     return results[0] if results else {"error": "Empty results"}
+
+
+
+def call_gemini_recommend(prompt: str) -> str:
+    """
+    Simple wrapper for free-text generation with Gemini.
+    Used for recommendation personalization (not routing).
+    """
+    try:
+        model = genai.GenerativeModel(model_name=GEMINI_MODEL_NAME)
+        resp = model.generate_content(prompt)
+        text = getattr(resp, "text", "") or (
+            resp.candidates[0].content.parts[0].text
+            if getattr(resp, "candidates", None) and resp.candidates[0].content.parts else ""
+        )
+        return text.strip()
+    except Exception as e:
+        return f"[LLM error: {e}]"

@@ -86,9 +86,21 @@
               minute: "2-digit",
             });
 
-            const predictionClass = item.pred_class === 1 ? "prediction-high" : "prediction-low";
-            const predictionLabel = item.pred_class === 1 ? "High Risk" : "Low Risk";
-            const predictionIcon = item.pred_class === 1 ? "fa-exclamation-triangle" : "fa-heart";
+            const predictionClass =
+              item.pred_class === 1 ? "prediction-high" : "prediction-low";
+            const predictionLabel =
+              item.pred_class === 1 ? "High Risk" : "Low Risk";
+            const predictionIcon =
+              item.pred_class === 1 ? "fa-exclamation-triangle" : "fa-heart";
+
+            // Check recommendation
+            const recommendationButton = item.recommendation
+              ? `<a href="recommendation.html?assessment_id=${item.assessment_id}&couple_id=${coupleId}" class="primary-btn">
+                   <i class="fas fa-lightbulb"></i> View Recommendation
+                 </a>`
+              : `<button onclick="generateRecommendation(${item.assessment_id})" class="primary-btn">
+                   <i class="fas fa-plus-circle"></i> Generate Recommendation
+                 </button>`;
 
             li.innerHTML = `
               <span>${formattedDate}</span>
@@ -102,6 +114,12 @@
                   <span class="prediction-label ${predictionClass}">
                     ${predictionLabel}
                   </span>
+                </div>
+                <div class="timeline-actions">
+                  <a href="assessment.html?assessment_id=${item.assessment_id}" class="secondary-btn">
+                    <i class="fas fa-eye"></i> View Details
+                  </a>
+                  ${recommendationButton}
                 </div>
               </div>
             `;
@@ -126,19 +144,12 @@
       // Generate recommendation and reload
       async function generateRecommendation(assessmentId) {
         try {
-          // POST to generate (this will also save it into DB)
-          const res = await fetch(
-            `${API_BASE}/assessments/${assessmentId}/recommendation`,
-            {
-              method: "POST",
-            }
-          );
-          if (!res.ok) {
-            const txt = await res.text();
-            throw new Error(`Failed to generate recommendation: ${txt}`);
-          }
-          // Refresh timeline so button changes to "View Recommendation"
-          await loadTimeline();
+          const res = await fetch(`${API_BASE}/assessments/${assessmentId}/recommendation`, {
+            method: "POST"
+          });
+          if (!res.ok) throw new Error("Failed to generate recommendation");
+
+          await loadTimeline(); // refresh timeline after generating
         } catch (err) {
           alert("Error generating recommendation. Please try again.");
           console.error(err);

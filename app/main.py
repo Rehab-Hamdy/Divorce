@@ -4,7 +4,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List
 from app.db import Base, engine, get_db
-from app.models import Doctor, Couple, Question, Assessment, Answer, PartnerEnum, Prediction
+from app.models import (
+    Doctor, Couple, Question, Assessment, Answer,
+    PartnerEnum, Prediction, Recommendation
+)
 from app.schemas import (
     DoctorCreate, DoctorOut,
     CoupleCreate, CoupleOut,
@@ -15,7 +18,7 @@ from app.schemas import (
     PredictionHistoryOut
 )
 from app.services.predictor import predict_for_assessment
-
+from app.services.recommendation import generate_recommendation
 
 # Create tables (demo; in prod use Alembic)
 Base.metadata.create_all(bind=engine)
@@ -140,13 +143,13 @@ def get_doctor_by_email(email: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Doctor not found")
     return doctor
 
-
 @app.get("/couples/{couple_id}/history", response_model=PredictionHistoryOut)
 def couple_history(couple_id: int, db: Session = Depends(get_db)):
     couple = db.query(Couple).get(couple_id)
     if not couple:
         raise HTTPException(404, "Couple not found")
 
+    # join prediction -> assessment to get title (and keep prediction fields)
     preds = (
         db.query(Prediction, Assessment.title)
         .join(Assessment, Prediction.assessment_id == Assessment.id)
@@ -155,20 +158,26 @@ def couple_history(couple_id: int, db: Session = Depends(get_db)):
         .all()
     )
 
-    items = [
-        {
-            "id": p.Prediction.id,
-            "assessment_id": p.Prediction.assessment_id,
-            "proba": p.Prediction.proba,
-            "pred_class": p.Prediction.pred_class,
-            "created_at": p.Prediction.created_at.isoformat(),
-            "title": p.title,
-        }
-        for p in preds
-    ]
+    items = []
+    for p in preds:
+        # p is a tuple-like row with .Prediction and .title
+        pred_obj = p.Prediction
+        assessment_title = p.title
+
+        # check if recommendation exists for this assessment (use assessment id)
+        rec_exists = db.query(Recommendation).filter(Recommendation.assessment_id == pred_obj.assessment_id).first()
+
+        items.append({
+            "id": pred_obj.id,
+            "assessment_id": pred_obj.assessment_id,
+            "proba": pred_obj.proba,
+            "pred_class": pred_obj.pred_class,
+            "created_at": pred_obj.created_at.isoformat(),
+            "title": assessment_title,
+            "recommendation": bool(rec_exists)
+        })
 
     return PredictionHistoryOut(couple_id=couple_id, items=items)
-
 
 
 @app.get("/couples/{couple_id}")
@@ -180,4 +189,24 @@ def get_couple(couple_id: int, db: Session = Depends(get_db)):
         "couple_id": couple.id,
         "partner_a_name": couple.partner_a_name,
         "partner_b_name": couple.partner_b_name,
+    }
+
+
+@app.post("/assessments/{assessment_id}/recommendation")
+def create_recommendation(assessment_id: int, db: Session = Depends(get_db)):
+    return generate_recommendation(db, assessment_id)
+
+
+@app.get("/assessments/{assessment_id}/recommendation")
+def get_recommendation(assessment_id: int, db: Session = Depends(get_db)):
+    """Return stored recommendation (do not regenerate)."""
+    rec = db.query(Recommendation).filter(Recommendation.assessment_id == assessment_id).order_by(Recommendation.id.desc()).first()
+    if not rec:
+        raise HTTPException(status_code=404, detail="Recommendation not found")
+    return {
+        "id": rec.id,
+        "assessment_id": rec.assessment_id,
+        "domains": rec.domains_json,
+        "modules": rec.modules_json,
+        "text": rec.personalized_text
     }

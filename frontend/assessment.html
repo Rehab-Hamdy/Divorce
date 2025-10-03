@@ -1,3 +1,4 @@
+<!-- assessment.html -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -90,6 +91,13 @@
         <button id="predictBtn">Predict</button>
         <pre id="predictResult"></pre>
       </div>
+
+      <!-- Recommendation Card -->
+      <div class="dashboard-card" id="recommendationCard" style="display: none">
+        <h2>Recommendations</h2>
+        <button id="recommendBtn">Generate Recommendation</button>
+        <div id="recommendResult"></div>
+      </div>
     </div>
 
     <!-- Question Modal -->
@@ -100,10 +108,6 @@
         <form id="questionForm">
           <label>Question Text:</label>
           <input type="text" id="questionText" required />
-          <!-- <label>Partner A Answer (0–4):</label>
-          <input type="number" id="answerA" min="0" max="4" required />
-          <label>Partner B Answer (0–4):</label>
-          <input type="number" id="answerB" min="0" max="4" required /> -->
           <label id="labelAnswerA">Partner A Answer (0–4):</label>
           <input type="number" id="answerA" min="0" max="4" required />
 
@@ -117,7 +121,15 @@
 
     <script src="app.js"></script>
     <script>
-      const coupleId = Number(localStorage.getItem("currentCoupleId"));
+      const urlParams = new URLSearchParams(window.location.search);
+      let coupleId = urlParams.get("couple_id");
+
+      if (coupleId) {
+        coupleId = Number(coupleId);
+        localStorage.setItem("currentCoupleId", coupleId); // Update local storage
+      } else {
+        coupleId = Number(localStorage.getItem("currentCoupleId"));
+      }
       let currentAssessmentId = null;
 
       if (!coupleId) {
@@ -232,7 +244,6 @@
           li.textContent = `${questionText} → ${partnerAName}: ${answerA}, ${partnerBName}: ${answerB}`;
           document.getElementById("questionsList").appendChild(li);
 
-
           // Reset & close modal
           document.getElementById("questionForm").reset();
           modal.style.display = "none";
@@ -266,7 +277,93 @@
             null,
             2
           );
+
+          // ✅ Show Recommendation card after prediction
+          document.getElementById("recommendationCard").style.display = "block";
         });
+
+      // Generate Recommendation
+      document
+        .getElementById("recommendBtn")
+        ?.addEventListener("click", async () => {
+          if (!currentAssessmentId) {
+            alert("No assessment selected");
+            return;
+          }
+
+          const res = await fetch(
+            `${API_BASE}/assessments/${currentAssessmentId}/recommendation`,
+            { method: "POST" }
+          );
+
+          if (!res.ok) {
+            document.getElementById("recommendResult").textContent =
+              "Recommendation failed: " + (await res.text());
+            return;
+          }
+
+          const recommendation = await res.json();
+          const programText = recommendation.text || "No recommendation available";
+
+          document.getElementById("recommendResult").innerHTML = renderRecommendation(programText);
+        });
+
+      function renderRecommendation(text) {
+        const tableStartIndex = text.indexOf('| Week');
+        const tableText = tableStartIndex !== -1 ? text.substring(tableStartIndex) : text;
+
+        const lines = tableText.trim().split('\n').filter(line => line.trim() && !line.includes('---'));
+
+        if (lines.length < 2) {
+          return `<div class="recommendation-text">${text.replace(/\n/g, "<br>")}</div>`;
+        }
+
+        const headers = lines[0].split('|').map(h => h.trim()).filter(Boolean);
+        const rows = [];
+        let currentRow = [];
+
+        lines.slice(1).forEach(line => {
+            const trimmedLine = line.trim();
+            if (trimmedLine.startsWith('|')) {
+                if (currentRow.length > 0) {
+                    rows.push(currentRow.slice(1, currentRow.length - 1));
+                }
+                currentRow = trimmedLine.split('|').map(cell => cell.trim());
+            } else if (currentRow.length > 0) {
+                currentRow[currentRow.length - 2] += `\n${trimmedLine}`;
+            }
+        });
+        if (currentRow.length > 0) {
+            rows.push(currentRow.slice(1, currentRow.length - 1));
+        }
+
+        let tableHtml = '<table class="recommendation-table">';
+        tableHtml += '<thead><tr>';
+        headers.forEach(header => { tableHtml += `<th>${header}</th>`; });
+        tableHtml += '</tr></thead>';
+
+        tableHtml += '<tbody>';
+        rows.forEach(row => {
+            tableHtml += '<tr>';
+            row.forEach((cell, index) => {
+                if (index === 2) { // Exercises/Tasks column
+                    const listItems = cell.split('\n').map(item => item.trim().replace(/^\* /, '')).filter(Boolean);
+                    const processedCell = listItems.map(item => {
+                        const bolded = item.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+                        return `<li>${bolded}</li>`;
+                    }).join('');
+                    tableHtml += `<td><ul>${processedCell}</ul></td>`;
+                } else {
+                    tableHtml += `<td>${cell.replace(/\*\*/g, '')}</td>`;
+                }
+            });
+            tableHtml += '</tr>';
+        });
+        tableHtml += '</tbody></table>';
+
+        return tableHtml;
+      }
+
     </script>
   </body>
 </html>

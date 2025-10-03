@@ -52,6 +52,8 @@ class Assessment(Base):
     answers = relationship("Answer", back_populates="assessment", cascade="all,delete")
     predictions = relationship("Prediction", back_populates="assessment", cascade="all,delete")
 
+    recommendation = relationship("Recommendation", back_populates="assessment", uselist=False)
+
 class Answer(Base):
     __tablename__ = "answers"
     id = Column(Integer, primary_key=True)
@@ -75,3 +77,15 @@ class Prediction(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     assessment = relationship("Assessment", back_populates="predictions")
+
+
+class Recommendation(Base):
+    __tablename__ = "recommendations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    assessment_id = Column(Integer, ForeignKey("assessments.id"), nullable=False)
+    domains_json = Column(JSON, nullable=False)       # risk scores + bands
+    modules_json = Column(JSON, nullable=False)       # base deterministic modules
+    personalized_text = Column(Text, nullable=False)  # final LLM recommendation
+
+    assessment = relationship("Assessment", back_populates="recommendation")

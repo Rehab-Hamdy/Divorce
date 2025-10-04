@@ -86,9 +86,12 @@
               minute: "2-digit",
             });
 
-            const predictionClass = item.pred_class === 1 ? "prediction-high" : "prediction-low";
-            const predictionLabel = item.pred_class === 1 ? "High Risk" : "Low Risk";
-            const predictionIcon = item.pred_class === 1 ? "fa-exclamation-triangle" : "fa-heart";
+            const predictionClass =
+              item.pred_class === 1 ? "prediction-high" : "prediction-low";
+            const predictionLabel =
+              item.pred_class === 1 ? "High Risk" : "Low Risk";
+            const predictionIcon =
+              item.pred_class === 1 ? "fa-exclamation-triangle" : "fa-heart";
 
             li.innerHTML = `
               <span>${formattedDate}</span>

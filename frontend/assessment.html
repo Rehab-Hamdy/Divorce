@@ -4,7 +4,6 @@
   <head>
     <meta charset="UTF-8" />
     <title>Divorce Risk Assessment</title>
-    <link rel="stylesheet" href="assessment-style.css" />
     <link rel="stylesheet" href="style.css" />
     <link
       rel="stylesheet"
@@ -24,10 +23,11 @@
         align-items: center;
       }
       .modal-content {
-        background: #fff;
+        background: var(--deep-purple);
         padding: 20px;
         border-radius: 8px;
         width: 400px;
+        border: 1px solid rgba(234, 232, 255, 0.12);
       }
       .modal-content h3 {
         margin-top: 0;
@@ -36,19 +36,19 @@
         float: right;
         cursor: pointer;
         font-size: 18px;
-        color: #888;
+        color: var(--light-lavender);
       }
       .questions-list {
         margin-top: 15px;
         padding: 10px;
-        border: 1px solid #ccc;
+        border: 1px solid rgba(234, 232, 255, 0.1);
         border-radius: 6px;
-        background: #f9f9f9;
+        background: rgba(255, 255, 255, 0.06);
       }
       .questions-list li {
         margin-bottom: 8px;
         padding: 6px;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid rgba(234, 232, 255, 0.1);
       }
     </style>
   </head>
@@ -237,8 +237,10 @@
           }
 
           // Add to UI
-          const partnerAName = localStorage.getItem("partnerAName") || "Partner A";
-          const partnerBName = localStorage.getItem("partnerBName") || "Partner B";
+          const partnerAName =
+            localStorage.getItem("partnerAName") || "Partner A";
+          const partnerBName =
+            localStorage.getItem("partnerBName") || "Partner B";
 
           const li = document.createElement("li");
           li.textContent = `${questionText} → ${partnerAName}: ${answerA}, ${partnerBName}: ${answerB}`;
@@ -303,67 +305,89 @@
           }
 
           const recommendation = await res.json();
-          const programText = recommendation.text || "No recommendation available";
+          const programText =
+            recommendation.text || "No recommendation available";
 
-          document.getElementById("recommendResult").innerHTML = renderRecommendation(programText);
+          document.getElementById("recommendResult").innerHTML =
+            renderRecommendation(programText);
         });
 
       function renderRecommendation(text) {
-        const tableStartIndex = text.indexOf('| Week');
-        const tableText = tableStartIndex !== -1 ? text.substring(tableStartIndex) : text;
+        const tableStartIndex = text.indexOf("| Week");
+        const tableText =
+          tableStartIndex !== -1 ? text.substring(tableStartIndex) : text;
 
-        const lines = tableText.trim().split('\n').filter(line => line.trim() && !line.includes('---'));
+        const lines = tableText
+          .trim()
+          .split("\n")
+          .filter((line) => line.trim() && !line.includes("---"));
 
         if (lines.length < 2) {
-          return `<div class="recommendation-text">${text.replace(/\n/g, "<br>")}</div>`;
+          return `<div class="recommendation-text">${text.replace(
+            /\n/g,
+            "<br>"
+          )}</div>`;
         }
 
-        const headers = lines[0].split('|').map(h => h.trim()).filter(Boolean);
+        const headers = lines[0]
+          .split("|")
+          .map((h) => h.trim())
+          .filter(Boolean);
         const rows = [];
         let currentRow = [];
 
-        lines.slice(1).forEach(line => {
-            const trimmedLine = line.trim();
-            if (trimmedLine.startsWith('|')) {
-                if (currentRow.length > 0) {
-                    rows.push(currentRow.slice(1, currentRow.length - 1));
-                }
-                currentRow = trimmedLine.split('|').map(cell => cell.trim());
-            } else if (currentRow.length > 0) {
-                currentRow[currentRow.length - 2] += `\n${trimmedLine}`;
+        lines.slice(1).forEach((line) => {
+          const trimmedLine = line.trim();
+          if (trimmedLine.startsWith("|")) {
+            if (currentRow.length > 0) {
+              rows.push(currentRow.slice(1, currentRow.length - 1));
             }
+            currentRow = trimmedLine.split("|").map((cell) => cell.trim());
+          } else if (currentRow.length > 0) {
+            currentRow[currentRow.length - 2] += `\n${trimmedLine}`;
+          }
         });
         if (currentRow.length > 0) {
-            rows.push(currentRow.slice(1, currentRow.length - 1));
+          rows.push(currentRow.slice(1, currentRow.length - 1));
         }
 
         let tableHtml = '<table class="recommendation-table">';
-        tableHtml += '<thead><tr>';
-        headers.forEach(header => { tableHtml += `<th>${header}</th>`; });
-        tableHtml += '</tr></thead>';
-
-        tableHtml += '<tbody>';
-        rows.forEach(row => {
-            tableHtml += '<tr>';
-            row.forEach((cell, index) => {
-                if (index === 2) { // Exercises/Tasks column
-                    const listItems = cell.split('\n').map(item => item.trim().replace(/^\* /, '')).filter(Boolean);
-                    const processedCell = listItems.map(item => {
-                        const bolded = item.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-                        return `<li>${bolded}</li>`;
-                    }).join('');
-                    tableHtml += `<td><ul>${processedCell}</ul></td>`;
-                } else {
-                    tableHtml += `<td>${cell.replace(/\*\*/g, '')}</td>`;
-                }
-            });
-            tableHtml += '</tr>';
+        tableHtml += "<thead><tr>";
+        headers.forEach((header) => {
+          tableHtml += `<th>${header}</th>`;
         });
-        tableHtml += '</tbody></table>';
+        tableHtml += "</tr></thead>";
+
+        tableHtml += "<tbody>";
+        rows.forEach((row) => {
+          tableHtml += "<tr>";
+          row.forEach((cell, index) => {
+            if (index === 2) {
+              // Exercises/Tasks column
+              const listItems = cell
+                .split("\n")
+                .map((item) => item.trim().replace(/^\* /, ""))
+                .filter(Boolean);
+              const processedCell = listItems
+                .map((item) => {
+                  const bolded = item.replace(
+                    /\*\*([^*]+)\*\*/g,
+                    "<strong>$1</strong>"
+                  );
+                  return `<li>${bolded}</li>`;
+                })
+                .join("");
+              tableHtml += `<td><ul>${processedCell}</ul></td>`;
+            } else {
+              tableHtml += `<td>${cell.replace(/\*\*/g, "")}</td>`;
+            }
+          });
+          tableHtml += "</tr>";
+        });
+        tableHtml += "</tbody></table>";
 
         return tableHtml;
       }
-
     </script>
   </body>
 </html>
